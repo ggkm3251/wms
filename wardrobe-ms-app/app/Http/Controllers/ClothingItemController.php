@@ -7,18 +7,26 @@ use App\Models\ClothingItem;
 
 class ClothingItemController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    // Get all clothing items for the authenticated user
+    public function index(Request $request)
     {
-        $clothingItems = ClothingItem::where('user_id', auth()->id())->get();
-        return response()->json($clothingItems);
+        $query = ClothingItem::where('user_id', auth()->id());
+
+    // Search by name
+    if ($request->has('search')) {
+        $query->where('name', 'like', '%' . $request->search . '%');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Filter by category
+    if ($request->has('category')) {
+        $query->where('category', $request->category);
+    }
+
+    $clothingItems = $query->get();
+    return response()->json($clothingItems);
+    }
+
+    // Store a new clothing item
     public function store(Request $request)
     {
         $request->validate([
@@ -39,9 +47,7 @@ class ClothingItemController extends Controller
         return response()->json($clothingItem, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
+    // Show a specific clothing item
     public function show(ClothingItem $clothingItem)
     {
         if ($clothingItem->user_id !== auth()->id()) {
@@ -50,9 +56,7 @@ class ClothingItemController extends Controller
         return response()->json($clothingItem);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // Update a clothing item
     public function update(Request $request, ClothingItem $clothingItem)
     {
         if ($clothingItem->user_id !== auth()->id()) {
@@ -70,9 +74,7 @@ class ClothingItemController extends Controller
         return response()->json($clothingItem);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    // Delete a clothing item
     public function destroy(ClothingItem $clothingItem)
     {
         if ($clothingItem->user_id !== auth()->id()) {
