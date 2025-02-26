@@ -35,7 +35,7 @@ export default {
     methods: {
         async fetchCategories() {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8000/api/categories', {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/categories`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             this.categories = response.data;
@@ -43,7 +43,7 @@ export default {
         async addItem() {
             const token = localStorage.getItem('token');
             await axios.post(
-                'http://localhost:8000/api/clothing-items',
+                `${import.meta.env.VITE_API_URL}/api/clothing-items`,
                 {
                     name: this.name,
                     description: this.description,

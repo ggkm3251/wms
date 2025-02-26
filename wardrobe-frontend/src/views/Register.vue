@@ -13,7 +13,8 @@
 </template>
 
 <script>
-import axios from 'axios';
+
+import apiClient, { fetchCsrfCookie } from '@/api';
 
 export default {
     data() {
@@ -27,7 +28,11 @@ export default {
     methods: {
         async register() {
             try {
-                const response = await axios.post('http://localhost:8000/api/register', {
+                // Fetch CSRF cookie
+                await fetchCsrfCookie();
+
+                // Make the registration request
+                const response = await apiClient.post('/api/register', {
                     name: this.name,
                     email: this.email,
                     password: this.password,

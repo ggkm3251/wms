@@ -23,13 +23,13 @@ export default {
     methods: {
         async login() {
             try {
-                const response = await axios.post('http://localhost:8000/api/login', {
+                const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, {
                     email: this.email,
                     password: this.password,
                 });
                 localStorage.setItem('token', response.data.token);
                 this.$router.push('/dashboard');
-            } catch (error) {
+            } catch {
                 alert('Login failed. Please check your credentials.');
             }
         },

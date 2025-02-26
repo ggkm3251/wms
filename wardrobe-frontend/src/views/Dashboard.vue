@@ -41,7 +41,7 @@ export default {
     methods: {
         async fetchClothingItems() {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8000/api/clothing-items', {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/clothing-items`, {
                 headers: { Authorization: `Bearer ${token}` },
                 params: { search: this.search, category: this.categoryFilter },
             });
@@ -49,7 +49,7 @@ export default {
         },
         async fetchCategories() {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8000/api/categories', {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/categories`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             this.categories = response.data;
@@ -59,7 +59,7 @@ export default {
         },
         async deleteItem(id) {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:8000/api/clothing-items/${id}`, {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/api/clothing-items/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             this.fetchClothingItems();
