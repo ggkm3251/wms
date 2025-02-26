@@ -49,4 +49,6 @@ A web application for managing your wardrobe, built with Vue 3 (frontend) and La
    npm run dev
    ```
 
-### Live Demo
+### Live Links
+1. Frontend: https://wms-rosy.vercel.app/
+2. Backend: https://wms-production-40f6.up.railway.app/
