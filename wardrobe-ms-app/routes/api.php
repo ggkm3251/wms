@@ -11,3 +11,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Categories Routes
     Route::apiResource('categories', CategoryController::class);
 });
+
+// Include authentication routes
+require __DIR__.'/auth.php';
