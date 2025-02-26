@@ -5,14 +5,9 @@ const apiClient = axios.create({
     withCredentials: true, // Required for cookies
 });
 
-// Add a request interceptor to log headers
-apiClient.interceptors.request.use((config) => {
-    console.log('Request Headers:', config.headers);
-    return config;
-});
-
+// Function to fetch CSRF cookie for Laravel Sanctum
 export const fetchCsrfCookie = async () => {
-    await apiClient.get('/sanctum/csrf-cookie');
+    return apiClient.get('/sanctum/csrf-cookie');
 };
 
 export default apiClient;
