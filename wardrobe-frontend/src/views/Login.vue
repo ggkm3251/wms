@@ -12,6 +12,7 @@
 
 <script>
 import axios from 'axios';
+import { useToast } from 'vue-toastification';
 
 export default {
     data() {
@@ -22,15 +23,17 @@ export default {
     },
     methods: {
         async login() {
+            const toast = useToast();
             try {
                 const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, {
                     email: this.email,
                     password: this.password,
                 });
                 localStorage.setItem('token', response.data.token);
+                toast.success('Login successful!');
                 this.$router.push('/dashboard');
             } catch {
-                alert('Login failed. Please check your credentials.');
+                toast.error('Login failed. Please check your credentials.');
             }
         },
     },

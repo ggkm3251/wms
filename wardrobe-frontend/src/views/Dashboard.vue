@@ -24,6 +24,7 @@
 
 <script>
 import axios from 'axios';
+import { useToast } from 'vue-toastification';
 
 export default {
     data() {
@@ -59,10 +60,16 @@ export default {
         },
         async deleteItem(id) {
             const token = localStorage.getItem('token');
-            await axios.delete(`${import.meta.env.VITE_API_URL}/api/clothing-items/${id}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            this.fetchClothingItems();
+            const toast = useToast();
+            try {
+                await axios.delete(`${import.meta.env.VITE_API_URL}/api/clothing-items/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                toast.success('Item deleted successfully!');
+                this.fetchClothingItems();
+            } catch (error) {
+                toast.error('Failed to delete item. Please try again.');
+            }
         },
     },
 };

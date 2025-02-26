@@ -15,6 +15,7 @@
 <script>
 
 import apiClient, { fetchCsrfCookie } from '@/api';
+import { useToast } from 'vue-toastification';
 
 export default {
     data() {
@@ -27,35 +28,23 @@ export default {
     },
     methods: {
         async register() {
+            const toast = useToast();
             try {
-                // Fetch CSRF cookie
                 await fetchCsrfCookie();
-
-                // Make the registration request
                 const response = await apiClient.post('/api/register', {
                     name: this.name,
                     email: this.email,
                     password: this.password,
                     password_confirmation: this.passwordConfirmation,
                 });
-
-                // Log the successful response
-                console.log('Registration successful:', response.data);
-
-                // Redirect to the login page after successful registration
+                toast.success('Registration successful!');
                 this.$router.push('/');
             } catch (error) {
-                // Log the full error response
-                console.error('Registration failed:', error.response?.data || error.message);
-
-                // Display a user-friendly error message
                 if (error.response?.data?.errors) {
-                    // Handle validation errors
                     const errorMessages = Object.values(error.response.data.errors).flat().join('\n');
-                    alert(`Registration failed:\n${errorMessages}`);
+                    toast.error(`Registration failed:\n${errorMessages}`);
                 } else {
-                    // Handle other errors (e.g., server errors)
-                    alert('Registration failed. Please try again.');
+                    toast.error('Registration failed. Please try again.');
                 }
             }
         },

@@ -18,6 +18,7 @@
 
 <script>
 import axios from 'axios';
+import { useToast } from 'vue-toastification';
 
 export default {
     data() {
@@ -55,17 +56,23 @@ export default {
         },
         async updateItem() {
             const token = localStorage.getItem('token');
-            await axios.put(
-                `${import.meta.env.VITE_API_URL}/api/clothing-items/${this.$route.params.id}`,
-                {
-                    name: this.name,
-                    description: this.description,
-                    category: this.category,
-                    image_url: this.imageUrl,
-                },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-            this.$router.push('/dashboard');
+            const toast = useToast();
+            try {
+                await axios.put(
+                    `${import.meta.env.VITE_API_URL}/api/clothing-items/${this.$route.params.id}`,
+                    {
+                        name: this.name,
+                        description: this.description,
+                        category: this.category,
+                        image_url: this.imageUrl,
+                    },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+                toast.success('Item updated successfully!');
+                this.$router.push('/dashboard');
+            } catch (error) {
+                toast.error('Failed to update item. Please try again.');
+            }
         },
     },
 };
