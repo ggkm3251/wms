@@ -17,8 +17,7 @@ class CategorySeeder extends Seeder
 
         foreach ($categories as $category) {
             Category::firstOrCreate(
-                ['name' => $category['name']], // Check for existing category by name
-                $category
+                ['name' => $category] 
             );
         }
     }
