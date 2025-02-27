@@ -18,10 +18,14 @@ apiClient.interceptors.request.use((config) => {
         .find(row => row.startsWith('XSRF-TOKEN='))
         ?.split('=')[1];
 
+        console.log('CSRF Token from cookie:', token); // Debugging
+
     // Add the CSRF token to the headers
     if (token) {
         config.headers['X-XSRF-TOKEN'] = token;
     }
+
+    console.log('Request headers:', config.headers); // Debugging
 
     return config;
 });
