@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient, { fetchCsrfCookie } from '@/api';
 import { useToast } from 'vue-toastification';
 
 export default {
@@ -36,17 +36,24 @@ export default {
     methods: {
         async fetchCategories() {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/categories`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            this.categories = response.data;
+            try {
+                await fetchCsrfCookie(); // Fetch CSRF token
+                const response = await apiClient.get('/api/categories', {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                this.categories = response.data; // Assign data to categories
+                console.log('Categories:', this.categories); // Debugging
+            } catch (error) {
+                console.error('Failed to fetch categories:', error);
+            }
         },
         async addItem() {
             const token = localStorage.getItem('token');
             const toast = useToast();
             try {
-                await axios.post(
-                    `${import.meta.env.VITE_API_URL}/api/clothing-items`,
+                await fetchCsrfCookie(); // Fetch CSRF token
+                await apiClient.post(
+                    '/api/clothing-items',
                     {
                         name: this.name,
                         description: this.description,

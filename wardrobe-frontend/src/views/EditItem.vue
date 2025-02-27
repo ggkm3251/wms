@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient, { fetchCsrfCookie } from '@/api';
 import { useToast } from 'vue-toastification';
 
 export default {
@@ -37,15 +37,15 @@ export default {
     methods: {
         async fetchCategories() {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/categories`, {
+            const response = await apiClient.get('/api/categories', {
                 headers: { Authorization: `Bearer ${token}` },
             });
             this.categories = response.data;
         },
         async fetchItem() {
             const token = localStorage.getItem('token');
-            const response = await axios.get(
-                `${import.meta.env.VITE_API_URL}/api/clothing-items/${this.$route.params.id}`,
+            const response = await apiClient.get(
+                `/api/clothing-items/${this.$route.params.id}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             const item = response.data;
@@ -58,8 +58,12 @@ export default {
             const token = localStorage.getItem('token');
             const toast = useToast();
             try {
-                await axios.put(
-                    `${import.meta.env.VITE_API_URL}/api/clothing-items/${this.$route.params.id}`,
+                // Fetch CSRF token before making the request
+                await fetchCsrfCookie();
+
+                // Make the request to update the clothing item
+                const response = await apiClient.put(
+                    `/api/clothing-items/${this.$route.params.id}`,
                     {
                         name: this.name,
                         description: this.description,
@@ -68,10 +72,18 @@ export default {
                     },
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
+
+                // Show success message and redirect
                 toast.success('Item updated successfully!');
                 this.$router.push('/dashboard');
             } catch (error) {
-                toast.error('Failed to update item. Please try again.');
+                // Handle errors
+                if (error.response?.data?.errors) {
+                    const errorMessages = Object.values(error.response.data.errors).flat().join('\n');
+                    toast.error(`Failed to update item:\n${errorMessages}`);
+                } else {
+                    toast.error('Failed to update item. Please try again.');
+                }
             }
         },
     },
