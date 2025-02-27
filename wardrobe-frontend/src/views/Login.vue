@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient, { fetchCsrfCookie } from '@/api';
 import { useToast } from 'vue-toastification';
 
 export default {
@@ -25,15 +25,29 @@ export default {
         async login() {
             const toast = useToast();
             try {
-                const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, {
+                // Fetch CSRF token before making the login request
+                await fetchCsrfCookie();
+
+                // Make the login request
+                const response = await apiClient.post('/api/login', {
                     email: this.email,
                     password: this.password,
                 });
+
+                // Store the token in localStorage
                 localStorage.setItem('token', response.data.token);
+
+                // Show success message and redirect
                 toast.success('Login successful!');
                 this.$router.push('/dashboard');
-            } catch {
-                toast.error('Login failed. Please check your credentials.');
+            } catch (error) {
+                // Handle errors
+                if (error.response?.data?.errors) {
+                    const errorMessages = Object.values(error.response.data.errors).flat().join('\n');
+                    toast.error(`Login failed:\n${errorMessages}`);
+                } else {
+                    toast.error('Login failed. Please check your credentials.');
+                }
             }
         },
     },
