@@ -13,7 +13,6 @@
 </template>
 
 <script>
-
 import apiClient, { fetchCsrfCookie } from '@/api';
 import { useToast } from 'vue-toastification';
 
@@ -30,16 +29,22 @@ export default {
         async register() {
             const toast = useToast();
             try {
+                // Fetch CSRF token before making the registration request
                 await fetchCsrfCookie();
+
+                // Make the registration request
                 const response = await apiClient.post('/api/register', {
                     name: this.name,
                     email: this.email,
                     password: this.password,
                     password_confirmation: this.passwordConfirmation,
                 });
+
+                // Show success message and redirect
                 toast.success('Registration successful!');
                 this.$router.push('/');
             } catch (error) {
+                // Handle errors
                 if (error.response?.data?.errors) {
                     const errorMessages = Object.values(error.response.data.errors).flat().join('\n');
                     toast.error(`Registration failed:\n${errorMessages}`);
