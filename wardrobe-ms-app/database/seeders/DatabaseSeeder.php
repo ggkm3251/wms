@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(CategoriesTableSeeder::class);
 
         User::firstOrCreate(
             ['email' => 'test@example.com'], // Check for existing user by email
