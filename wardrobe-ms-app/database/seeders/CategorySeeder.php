@@ -9,7 +9,7 @@ use App\Models\Category;
 class CategorySeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Run the database seeds.\App\Models\User::all();
      */
     public function run(): void
     {
